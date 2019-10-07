@@ -1,67 +1,140 @@
-= CSCI C490 Design Document Requirements
+= CSCI-C490 Project - CubeTimer
 
-You will create a document to describe the particular Android project you wish to complete for this course.
+== Motivation
+The app I will be creating will be a timer for Rubik's Cube type puzzles (just NxNxN puzzles to begin with), with the target audience of speedcubers.
 
-. Create a new Markdown or Asciidoctor document to replace this readme document.
-. Format your document with proper headings, sections, paragraphs, etc.
-. Your document should include descriptions of the rest of this document in copmelete and professional prose.
+This app is inspired by, and will be based on the app https://play.google.com/store/apps/details?id=com.aricneto.twistytimer&hl=en_US["Twisty Timer"]. As far as I am aware, the app is only available on Android, but there is a similar (but not free) app on iOS called https://apps.apple.com/us/app/byte-timer-twisty-timer/id1435909416["Byte Timer"]
 
-== Section 1 – Motivation for Your App
+== User Interface
 
-In this section, describe the motivation behind your choice of app to design and implement. Also indicate who is the target user base. Include references to existing apps that are similar to the app you are proposing – references must include the name of the app, the platform (e.g., iOS, Android, Windows, MacOS, etc.), and a link to a website describing the app.
+There will be two main screens in the app: the timer and the time list.
 
-== Section 2 - Meeting Minimum Requirements
+=== Timer
+This is the main screen of the app, and is where most of the functionality will be.
 
-In this section, describe using sentences and paragraphs written in English, the screens included in your app’s user interface. Include in this text portion the required diagrams (see below, 2.1 User Interface, Item #5). Describe how your app will not lose any user’s input data when switching between configurations and also among the various screens supported by your app. Items #2 and #4 (below) indicate that exceptions can be made, if you are electing to exercise one or both of these exception, then here is where you must make a compelling argument for the exception.
+This screen will be divided into 5 subsections: 
 
-Additionally, for this section, you must describe how your app will meet the data persistence requirement. Describe where the data will be stored (e.g., on the device, in the cloud, etc.), how it will be stored (e.g., in an SQL database), at what points during app execution that the storage of data will occur (consider using the Android app Life Cycle for describing when), how the data will be retrieved upon restart of the app, and at what point it will be retrieved (again, consider utilizing the Android app Life Cycle).
+* Puzzle selector
+** Menu to select which puzzle you want to solve.
+* Scramble
+** Randomly generated scramble (via web API) for the puzzle selected above.
+* Timer
+** Times the current solve.
+* Stats
+** Displays the following statistics for the selected puzzle: 
+*** Mean -- Drop the highest and lowest and average the rest
+*** Best -- Fastest solve
+*** Count -- Total number of solves
+*** Ao5 -- Average of the last 5 solves ("--" until there are at least 5 solves)
+*** Ao10 -- Average of the last 10 solves ("--" until there are at least 10 solves)
+*** Ao50 -- Average of the last 50 solves ("--" until there are at least 50 solves)
+* Menu
+** Controls to switch between timer and time list screens (for the selected puzzle).
 
-Finally, for this section, describe how your app will communicate to the outside world. By what means (e.g., Bluetooth, Wi-Fi to Internet, etc.), for what purpose this outside world communication serves with respect to supporting the app’s functionality, and describe what devices or external resources are on the other end of the communication. If the device or other resource at the other end of the communication is going to be created by you (i.e., it does not already exist), then you must give specific details on how you will setup and configure this other device/resource.
+==== Layouts
 
-=== 2.1 User Interface
+.Timer screen (portrait)
+[caption="Figure 1: "]
+image::images/CubeTimer_portrait.png[float='left']
 
-1. Must work in both landscape and portrait configuration and not lose any of the user's input when switching between configurations, and/or screens
-2. There can be an exception to #1, but in your initial design document, you must make a compelling argument for it to work in only one configuration
-3. Must work on both the Samsung Tab A 10.1" and the Nexus Asus 7" tablets
-4. There can be an exception to #3, but in your initial design document, you must make a compelling argument for it
-to work on only one of these devices
-5. You must submit diagrams for all the different screens in your app (both portrait and landscape configurations),
-one diagram per screen. These diagrams must clearly show the layout of your app's screens, i.e., where images, menus, widgets, views, etc., appear. These can be hand drawn with a .png submitted of the drawing.
+[.clearfix]
+.Timer screen (landscape)
+[caption="Figure 2: "]
+image::images/CubeTimer_landscape.png[float:'left']
 
-=== 2.2 Data Persistence
+=== Time List
+This screen will display a history of all the user's solves for the selected puzzle. From here the user will be able to do things like see/delete times and (_possibly_) the ability to see the associated scramble and add a comment.
 
-1. Your app must demonstrate that it saves data from one use to another
-2. To test this, your app will be shut down by an onDestroy() event, and then restarted
-3. Data entered in by the user during one use must be present when the app is restarted for another use
+==== Layouts
+.Time list screen (portrait)
+[caption="Figure 1: "]
+image::images/CubeTimes_portrait.png[float='left']
 
-=== 2.3 Communication
+[.clearfix]
+.Time list screen (landscape)
+[caption="Figure 2: "]
+image::images/CubeTimes_landscape.png[float:'left']
 
-* Your app must demonstrate that it communicates with the outside world, with either another device or an external resource
+== Data Persistence
+Data will be stored in the device's SQLite database using Room.
 
-== Section 3 – MVC Breakdown of Your App
+Data will be divided into two categories:
 
-In this section, you must utilize the MVC Design Pattern to describe each of the screens supported by your app.
-There are a couple of ways you might go about organizing this section of your document:
+* User settings
+** Selected puzzle
+** Show inspection*
+** Inspection time*
+* Times
+** Solve time (milliseconds)
+** Solve date
+** Puzzle type
+** Scramble**
+** Comment**
 
-1. This approach uses one design document section per screen – i.e., provide View, Model, and Controller descriptions about each screen, one screen’s MVC set of descriptions after another
-2. This approach has three sections, a View section, a Model section, and a Controller section. In the View section provide a description of each screen appearing in your app, in the Model section provide a description of all Java classes used in the model, in the Controller section provide a description of all controllers required by your app
+*Will only be added if I have time to implement the inspection feature
 
-=== 3.1 View Descriptions
+**Will be added if I have time
 
-In the description of each screen’s view, provide a diagram (See Section 2.1, above for details about this diagram). These diagrams will more than likely be identical to the ones used to satisfy Section 2 requirements, that is permissible. If the screen contains active widgets, e.g., a Button, then for each of these active widgets you must describe how the user interacts with the widget, what happens when the user does interact with the widget, and the name of the method/operation that is the “listener” for the widget – e.g., user pushes OK button to go back to previous screen, the goBack method in the Java class DataEntryActivity is the listener for this Button.
+== Communication
+This app will communicate with the outside world by getting its scrambles from an outside API https://scrambler-api.herokuapp.com/3x3x3. This is a very simple REST API that returns a JSON array with a random scramble for a given puzzle. I did not create this API, I simply stumbled across it on a cubing forum. If I end up continuing the development of this app after class I will make my own REST API or bake the scrambler directly into the app. But for now it suits my purposes.
 
-Include in this part the name of the .xml Layout file associated with each View and the various minimum screen sizes supported (in dp), e.g., 600dp and 800dp. Please include the root layout utilized by each View, e.g., ConstraintLayout, GridLayout, LinearLayout, etc., and why you elected to choose that particular root layout. It might be possible that you have decided to construct a View by writing Java methods and that the View’s .xml file is minimal. If that is the case be sure to name the controller that will be constructing your View along with the names of the methods that will have the implementation code.
+= MVC Breakdown
+This app will consist of only one activity (MainActivity). This activity will have a couple of static parts (Puzzle Selector and Menu) as well as several Fragments that are dynamically loaded/unloaded (TimerFragment and TimesListFragment).
 
-=== 3.2 Model Descriptions
+* onCreate loads TimerFragment
 
-Start off with a high-level description of what data needs to be stored, and what Java classes and/or databases/external resources will be utilized to store this data.
+== Puzzle Selector
+* Will be essentially just a Spinner that allows the user to select from the list of available puzzles.
+** Undecided on wether available puzzle will be hard coded in or loaded dynamically.
+* Once a puzzle has been selected it will be saved to the view model (MainActivityViewModel) and to the Room Database.
+** onCreate will pull from the database to set the selected puzzle to whatever the last selected puzzle was (default to 3x3).
 
-For each Java class used to store data, you must supply the name of the class, and a list of all public methods called by clients of the class (note: Controller classes are the likely clients). If a method has a precondition that must be satisfied by the calling client, e.g., a setter method that stores positive integer, then you must include a requires clause stating what the precondition is – this requires clause can be written in English or user mathematics if possible. Utilize design by contract in your design of the model java classes, i.e., if a setter method stores only positive integers, the setter method has a requires clause indicating that the value being supplied by the client must be positive, and the setter method does not have an if statement to check the requires clause.
+== Menu
+* Consists of two items (probably represented by icons) Timer and Times List. 
+** Timer (default)
+*** Loads the TimerFragment and unloads the TimesListFragment when clicked
+** Times List
+*** Loads the TimesListFragment and unloads the TimerFragment
+* Selected item is stored in the MainActivityViewModel (for preservation on rotation)
 
-If your app’s model is utilizing an SQL database or some resource in the cloud, then you must provide a detailed description of this database/resource. For example, for a database answer at least the following, what tables will be present, what columns are in each of the tables, what are the data types of each of the columns, which column (if any) is the key field, how the tables relate to one another, etc.
+== TimerFragment
+Contains the following 3 parts:
 
-=== 3.3 Controller Descriptions
+=== Scramble
+* Shows a scramble for the selected puzzle
+* Fetches the appropriate scramble from the web API
+** Scramble will be updated when the puzzle selection changes
+* Saves scramble to its own ViewModel (TimerViewModel) to prevent loss on rotation
+* Possible features:
+** Save scramble to database with the corresponding solve time
+** Add click event to fetch a new scramble
 
-Start off with a high-level description of each controller and what screen it controls. Then include which Life Cycle methods are overridden by the controller. This part of the description will almost certainly have to include as a minimum how onCreate is implemented. Describe how and when the controller saves off data into the model, and how and when it retrieves data from the model.
+=== Timer
+* Times the users solves down to a millisecond (0.01 sec)
+** Timer starts when the user clicks on the timer display
+*** If I have time/can figure it out, this may change to the user pressing and holding the timer display for a second
+** Timer stops when the user clicks the timer display a second time
+*** Stopping the timer will save the final time to the Room database
+* Current time will be will be updated in the ViewModel (TimerViewModel) in real time (to prevent the time from being lost on rotation)
+** Time will be saved as milliseconds and converted to the display format (mm:ss.SS)
+*** Time will be converted from milliseconds either using a util function, either built in or custom
+* If the inspection feature is implemented/enabled:
+** First click on timer display will start inspection count down
+** Second click will start the timer, if the inspection is still going, else it will stop the timer
+** Third click will stop the timer, if the timer was started mid-inspection
 
-You must describe how your app will satisfy the data persistence requirement in the controller descriptions and/or the model descriptions. If the model is designed so that it always keeps the persistent data store up-to-date, then the model description will more than likely discuss persistence. If the controller is implemented to update the persistent data store at some specific time of the app’s life cycle, then the controller’s description will more than likely discuss persistence. The discussion might need to appear in both the model and the controller descriptions.
+=== Stats
+* Displays various statistics about the users solve times (see <<Timer, User Interface>> section)
+* onCreate (TimerFragment) loads initial array of solve times to use for calculations
+** Later solves are added directly to this array when a solve is finished
+** Array is refreshed when the puzzle selection changes
+* Stats are updated after every solve
+
+== TimesListFragment
+* Loads a list of all the solves for the selected puzzle from the Room database
+* Allows the user to delete a solve
+** User will press and hold a solve for a second at which point a delete icon will appear at the top of the screen, below the puzzle selection
+* May add other features such as:
+** The ability to edit solve times/penalties
+** The ability to view the solve scramble
+** The ability to see/edit a comment on the solve
