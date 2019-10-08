@@ -85,7 +85,7 @@ This app will consist of only one activity (MainActivity). This activity will ha
 
 == Puzzle Selector
 * Will be essentially just a Spinner that allows the user to select from the list of available puzzles.
-** Undecided on wether available puzzle will be hard coded in or loaded dynamically.
+** Undecided on whether available puzzles will be hard coded in or loaded dynamically.
 * Once a puzzle has been selected it will be saved to the view model (MainActivityViewModel) and to the Room Database.
 ** onCreate will pull from the database to set the selected puzzle to whatever the last selected puzzle was (default to 3x3).
 
@@ -104,7 +104,7 @@ Contains the following 3 parts:
 * Shows a scramble for the selected puzzle
 * Fetches the appropriate scramble from the web API
 ** Scramble will be updated when the puzzle selection changes
-* Saves scramble to its own ViewModel (TimerViewModel) to prevent loss on rotation
+* Saves scramble to the TimerViewModel to prevent loss on rotation
 * Possible features:
 ** Save scramble to database with the corresponding solve time
 ** Add click event to fetch a new scramble
