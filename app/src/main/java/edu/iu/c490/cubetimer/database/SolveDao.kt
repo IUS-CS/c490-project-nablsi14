@@ -8,7 +8,7 @@ import edu.iu.c490.cubetimer.Solve
 
 @Dao
 interface SolveDao {
-    @Query("select * from solve where type=(:type)")
+    @Query("select * from solve where type=(:type) order by date asc")
     fun getSolves(type: String): LiveData<List<Solve>>
 
     @Insert
