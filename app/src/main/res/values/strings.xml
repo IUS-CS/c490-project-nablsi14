@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">CubeTimer</string>
+    <string name="time_list_text">Times</string>
+    <string name="timer_text">Timer</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="count_default">Count: 0</string>
+    <string name="best_default">Best: --</string>
+    <string name="mean_default">Mean: --</string>
+    <string name="ao50_default">Ao50: --</string>
+    <string name="ao10_default">Ao10: --</string>
+    <string name="ao5_default">Ao5: --</string>
 </resources>
