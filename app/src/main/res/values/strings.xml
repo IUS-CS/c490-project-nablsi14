@@ -11,4 +11,5 @@
     <string name="ao50_default">Ao50: --</string>
     <string name="ao10_default">Ao10: --</string>
     <string name="ao5_default">Ao5: --</string>
+    <string name="defaultScrambleText">Senerating Scramble...</string>
 </resources>
