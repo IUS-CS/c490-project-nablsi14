@@ -1,13 +1,21 @@
 package edu.iu.c490.cubetimer
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_timer.*
+import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
+private const val TAG = "TimerFragment"
 
 /**
  * A simple [Fragment] subclass.
@@ -16,11 +24,19 @@ import kotlinx.android.synthetic.main.fragment_timer.*
  */
 class TimerFragment : Fragment() {
 
-    private lateinit var timerViewModel: TimerViewModel
+    private lateinit var viewModel: TimerViewModel
+    private lateinit var appViewModel: AppViewModel
+    private lateinit var repository: SolveRepository
+
+    private val executor = Executors.newSingleThreadExecutor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        timerViewModel = ViewModelProviders.of(this).get(TimerViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(TimerViewModel::class.java)
+
+        appViewModel = activity?.run {
+            ViewModelProviders.of(this).get(AppViewModel::class.java)
+        }!!
     }
 
     override fun onCreateView(
@@ -28,18 +44,134 @@ class TimerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_timer, container, false)
+        val view = inflater.inflate(R.layout.fragment_timer, container, false)
+
+        repository = SolveRepository.get()
+//        executor.execute {
+//            repository.deleteAll()
+//        }
+
+        view.findViewById<TextView>(R.id.timerText).setOnClickListener {
+            onTimerClick()
+        }
+        appViewModel.selectedPuzzle.observe(viewLifecycleOwner, Observer {
+            onPuzzleChange(it)
+        })
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        timerViewModel.scrambleLiveData.observe(this,
+        viewModel.scrambleLiveData.observe(viewLifecycleOwner,
             Observer { scramble ->
                 scrambleText.text = scramble
             })
+
     }
 
+    private fun formatTime(millis: Long, format: String = "LONG"): String {
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis)
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) - (minutes * 60)
+        val mil = millis % 100
+
+        if (format == "short")
+            return String.format("%02d.%02d", seconds, mil)
+
+        return String.format("%02d:%02d.%02d", minutes, seconds, mil)
+
+    }
+
+    private fun onTimerClick() {
+        if (viewModel.timerIsRunning) {
+            stopTimer()
+            val puzzle = appViewModel.selectedPuzzle.value!!
+            val solve = Solve(
+                UUID.randomUUID(),
+                viewModel.millis,
+                puzzle
+            )
+
+            executor.execute {
+                repository.addSolve(solve)
+            }. run {
+                updateStats(puzzle)
+            }
+        } else {
+            startTimer()
+        }
+    }
+    private fun onPuzzleChange(newPuzzle: String) {
+        viewModel.getNewScramble(newPuzzle).observe(this, Observer { scramble ->
+            viewModel.scrambleLiveData.value = scramble
+        })
+        stopTimer()
+        timerText.text = "00:00.00"
+        updateStats(newPuzzle)
+    }
+
+    private fun startTimer() {
+        viewModel.millis = 0
+        viewModel.timer = Timer()
+        viewModel.timer.scheduleAtFixedRate(object: TimerTask() {
+            override fun run() {
+                activity?.runOnUiThread {
+                    viewModel.millis++
+                    timerText?.text = formatTime(viewModel.millis)
+                }
+            }
+        }, 0, 1)
+        viewModel.timerIsRunning = true
+    }
+    private fun stopTimer() {
+        if (viewModel.timerIsRunning) {
+            viewModel.timer.cancel()
+            viewModel.timer.purge()
+            viewModel.timerIsRunning = false
+        }
+    }
+    private fun updateStats(puzzle: String) {
+        repository.getSolves(puzzle).observe(this,
+            Observer { solves ->
+                // Get number of solves
+                solve_count.text = "Solves: ${solves.size}"
+
+                // Get overall average
+                if (solves.isNotEmpty()) {
+                    val avg = solves.fold(0) {sum: Long, solve -> sum + solve.time} / solves.size
+                    mean.text = "Avg: ${formatTime(avg, "short")}"
+                } else
+                    mean.text = resources.getString(R.string.mean_default)
+
+                // Get Average of 5
+                if (solves.size >= 5) {
+                    val time = solves.take(5).fold(0) {sum: Long, solve -> sum + solve.time} / 5
+                    avg_of_5.text = "Ao5: ${formatTime(time, "short")}"
+                } else
+                    avg_of_5.text = resources.getString(R.string.ao5_default)
+
+                // Get average of 10
+                if (solves.size >= 10) {
+                    val time = solves.take(10).fold(0) {sum: Long, solve -> sum + solve.time} / 10
+                    avg_of_10.text = "Ao10: ${formatTime(time, "short")}"
+                } else
+                    avg_of_10.text = resources.getString(R.string.ao10_default)
+
+                // Get average of 50
+                if (solves.size >= 50) {
+                    val time = solves.take(10).fold(0) {sum: Long, solve -> sum + solve.time} / 50
+                    avg_of_50.text = "Ao10: ${formatTime(time, "short")}"
+                } else
+                    avg_of_50.text = resources.getString(R.string.ao50_default)
+
+                // Get best
+                if (solves.isNotEmpty()) {
+                    val min: Solve = solves.minBy { it.time }!!
+                    best.text = "Best: ${formatTime(min.time, "short")}"
+                } else
+                    best.text = resources.getString(R.string.best_default)
+            })
+    }
 
     companion object {
         /**

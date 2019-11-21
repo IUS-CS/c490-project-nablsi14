@@ -1,17 +1,20 @@
 package edu.iu.c490.cubetimer
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
+import java.util.*
+
 class TimerViewModel: ViewModel() {
-    var scrambleLiveData: LiveData<String>
-
-    init {
-        scrambleLiveData = ScrambleFetcher().fetchScramble("3x3x3")
+    val scrambleLiveData: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
     }
+    var millis: Long = 0
+    var timerIsRunning = false
+    var timer: Timer = Timer()
 
-    fun getNewScramble(puzzle: String) {
-        scrambleLiveData = ScrambleFetcher().fetchScramble(puzzle)
+    fun getNewScramble(puzzle: String): LiveData<String> {
+        return ScrambleFetcher().fetchScramble(puzzle)
     }
-
 }

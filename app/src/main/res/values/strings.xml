@@ -5,11 +5,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="count_default">Count: 0</string>
+    <string name="count_default">Solves: 0</string>
     <string name="best_default">Best: --</string>
     <string name="mean_default">Mean: --</string>
     <string name="ao50_default">Ao50: --</string>
     <string name="ao10_default">Ao10: --</string>
     <string name="ao5_default">Ao5: --</string>
-    <string name="defaultScrambleText">Senerating Scramble...</string>
+    <string name="defaultScrambleText">Generating Scramble...</string>
+    <string name="defaultTimerText">00:00.00</string>
 </resources>
