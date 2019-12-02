@@ -84,34 +84,13 @@ class TimesListFragment : Fragment(), ViewTreeObserver.OnGlobalLayoutListener {
                 solveItemRecyclerView.adapter = SolveItemAdapter(solveItems)
             })
     }
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson
-     * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
 
     companion object {
-
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
-
-        // TODO: Customize parameter initialization
         @JvmStatic
-        fun newInstance(columnCount: Int) =
-            TimesListFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
-                }
-            }
+        fun newInstance() = TimesListFragment()
     }
 
-    private class SolveItemHolder(private val view: View, private val dateView: TextView, timeView: TextView) :
+    private class SolveItemHolder(view: View, dateView: TextView, timeView: TextView) :
         RecyclerView.ViewHolder(view) {
         val bindDate: (CharSequence) -> Unit = dateView::setText
         val bindText: (CharSequence) -> Unit = timeView::setText

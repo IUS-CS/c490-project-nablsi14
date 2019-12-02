@@ -22,7 +22,7 @@ class CustomUtils {
             return String.format("%02d:%02d.%02d", minutes, seconds, mil)
 
         }
-        val dateFormatter = SimpleDateFormat("mm/dd/yy")
+        val dateFormatter = SimpleDateFormat("MM/dd/yy")
 
     }
 

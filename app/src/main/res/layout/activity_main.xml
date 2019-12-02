@@ -24,26 +24,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/puzzle_selector"
-        app:layout_constraintBottom_toTopOf="@id/timer_btn"/>
-    <Button
+        app:layout_constraintBottom_toTopOf="@id/timer_btn">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageButton
         android:id="@+id/timer_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
         android:text="@string/timer_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/time_list_btn"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_recent_history" />
 
-    <Button
+    <ImageButton
         android:id="@+id/time_list_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
         android:text="@string/time_list_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/timer_btn" />
-
+        app:layout_constraintStart_toEndOf="@+id/timer_btn"
+        app:srcCompat="@android:drawable/ic_menu_sort_by_size" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
