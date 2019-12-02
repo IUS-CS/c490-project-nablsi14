@@ -40,13 +40,15 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         val timerFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
         if (timerFragment == null) {
-            val fragment = TimerFragment()
+//            val fragment = TimerFragment()
+            val fragment = TimesListFragment()
             fragment.retainInstance = true
             supportFragmentManager
                 .beginTransaction()
                 .add(R.id.fragment_container, fragment)
                 .commit()
         }
+
 
 
     }

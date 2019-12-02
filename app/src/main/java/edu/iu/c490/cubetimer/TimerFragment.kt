@@ -70,18 +70,6 @@ class TimerFragment : Fragment() {
 
     }
 
-    private fun formatTime(millis: Long, format: String = "LONG"): String {
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(millis)
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(millis) - (minutes * 60)
-        val mil = millis % 100
-
-        if (format == "short")
-            return String.format("%02d.%02d", seconds, mil)
-
-        return String.format("%02d:%02d.%02d", minutes, seconds, mil)
-
-    }
-
     private fun onTimerClick() {
         if (viewModel.timerIsRunning) {
             stopTimer()
@@ -117,7 +105,7 @@ class TimerFragment : Fragment() {
             override fun run() {
                 activity?.runOnUiThread {
                     viewModel.millis++
-                    timerText?.text = formatTime(viewModel.millis)
+                    timerText?.text = CustomUtils.formatTime(viewModel.millis)
                 }
             }
         }, 0, 1)
@@ -139,35 +127,35 @@ class TimerFragment : Fragment() {
                 // Get overall average
                 if (solves.isNotEmpty()) {
                     val avg = solves.fold(0) {sum: Long, solve -> sum + solve.time} / solves.size
-                    mean.text = "Avg: ${formatTime(avg, "short")}"
+                    mean.text = "Avg: ${CustomUtils.formatTime(avg, TimeFormat.SHORT)}"
                 } else
                     mean.text = resources.getString(R.string.mean_default)
 
                 // Get Average of 5
                 if (solves.size >= 5) {
                     val time = solves.take(5).fold(0) {sum: Long, solve -> sum + solve.time} / 5
-                    avg_of_5.text = "Ao5: ${formatTime(time, "short")}"
+                    avg_of_5.text = "Ao5: ${CustomUtils.formatTime(time, TimeFormat.SHORT)}"
                 } else
                     avg_of_5.text = resources.getString(R.string.ao5_default)
 
                 // Get average of 10
                 if (solves.size >= 10) {
                     val time = solves.take(10).fold(0) {sum: Long, solve -> sum + solve.time} / 10
-                    avg_of_10.text = "Ao10: ${formatTime(time, "short")}"
+                    avg_of_10.text = "Ao10: ${CustomUtils.formatTime(time, TimeFormat.SHORT)}"
                 } else
                     avg_of_10.text = resources.getString(R.string.ao10_default)
 
                 // Get average of 50
                 if (solves.size >= 50) {
                     val time = solves.take(10).fold(0) {sum: Long, solve -> sum + solve.time} / 50
-                    avg_of_50.text = "Ao10: ${formatTime(time, "short")}"
+                    avg_of_50.text = "Ao10: ${CustomUtils.formatTime(time, TimeFormat.SHORT)}"
                 } else
                     avg_of_50.text = resources.getString(R.string.ao50_default)
 
                 // Get best
                 if (solves.isNotEmpty()) {
                     val min: Solve = solves.minBy { it.time }!!
-                    best.text = "Best: ${formatTime(min.time, "short")}"
+                    best.text = "Best: ${CustomUtils.formatTime(min.time, TimeFormat.SHORT)}"
                 } else
                     best.text = resources.getString(R.string.best_default)
             })
