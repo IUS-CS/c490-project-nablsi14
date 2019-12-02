@@ -1,21 +1,17 @@
 package edu.iu.c490.cubetimer
 
 import android.os.Bundle
-import android.util.Log
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_timer.*
 import java.util.*
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-
-private const val TAG = "TimerFragment"
 
 /**
  * A simple [Fragment] subclass.
@@ -90,8 +86,11 @@ class TimerFragment : Fragment() {
         }
     }
     private fun onPuzzleChange(newPuzzle: String) {
+
         viewModel.getNewScramble(newPuzzle).observe(this, Observer { scramble ->
             viewModel.scrambleLiveData.value = scramble
+            val size = if (newPuzzle == "6x6x6" || newPuzzle == "7x7x7") 20f else 24f
+            scrambleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, size)
         })
         stopTimer()
         timerText.text = "00:00.00"
